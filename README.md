@@ -8,9 +8,18 @@ An explainable remote-sensing analysis prototype. Upload an RGB satellite/aerial
 ## Architecture
 ```mermaid
 flowchart LR
-U[Upload] --> V[Validate + quality check] --> P[Preprocess: RGB, resize <=800px, [0,1]] --> F[11 features] --> N[z-score normalise] --> K[K-means K=6]
-K --> M[Cluster to class mapping] --> R[Connected components + compass] --> VIZ[Overlays / heatmap / features]
-Q[Question] --> I[Intent router] --> R --> A[Answer + evidence + highlighted mask]
+    U[Satellite Image] --> V[Validation]
+    V --> P[Preprocessing]
+    P --> F[Feature Engineering]
+    F --> N[Feature Normalization]
+    N --> K[K-Means K=6]
+    K --> M[Land-Cover Mapping]
+    M --> R[Spatial Analysis]
+    R --> Z[Visualization]
+
+    Q[User Query] --> I[Intent Detection]
+    I --> R
+    R --> A[Answer and Visual Evidence]
 ```
 ## ML Method
 Unsupervised **K-means (K=6, scikit-learn)** on z-score-normalised per-pixel features. Fitted on 15,000 sampled pixels, then all pixels get their nearest centroid. Confidence is the **cluster separation score** (nearest vs second-nearest centroid margin): a geometric measure, **not accuracy**.
